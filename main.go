@@ -3,11 +3,11 @@ package main
 import (
 	"pms/config"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	app := fiber.New()
+	app := echo.New()
 	config.Connect("mongodb://localhost:27017")
-	app.Listen(":3000")
+	app.Start(":3000")
 }
