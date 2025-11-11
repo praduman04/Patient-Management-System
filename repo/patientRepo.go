@@ -68,11 +68,12 @@ func (r *PatientRepo) Update(ctx context.Context, id string, updatedData models.
 	updatedData.UpdatedAt = time.Now()
 	update := bson.M{
 		"$set": bson.M{
-			"name":   updatedData.Name,
-			"email":  updatedData.Email,
-			"phone":  updatedData.Phone,
-			"age":    updatedData.Age,
-			"gender": updatedData.Gender,
+			"name":       updatedData.Name,
+			"email":      updatedData.Email,
+			"phone":      updatedData.Phone,
+			"age":        updatedData.Age,
+			"gender":     updatedData.Gender,
+			"updated_at": updatedData.UpdatedAt,
 		},
 	}
 	return r.collection.UpdateByID(ctx, bson.M{"_id": objId}, update)

@@ -28,6 +28,6 @@ func Connect(uri string) {
 	log.Println("MongoDB connected successfully")
 }
 
-func GetCollection(name string) *mongo.Collection {
-	return Client.Database("pms").Collection(name)
+func GetCollection(name string) *mongo.Database {
+	return Client.Database("pms")
 }
