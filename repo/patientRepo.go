@@ -60,23 +60,24 @@ func (r *PatientRepo) DeleteById(ctx context.Context, objId string) (*mongo.Dele
 	return r.collection.DeleteOne(ctx, bson.M{"_id": id})
 
 }
-func (r *PatientRepo) Update(ctx context.Context, id string, updatedData models.Patient) (*mongo.UpdateResult, error) {
+func (r *PatientRepo) Update(ctx context.Context, id string, updatedData bson.M) (*models.Patient, error) {
 	objId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
-	updatedData.UpdatedAt = time.Now()
 	update := bson.M{
-		"$set": bson.M{
-			"name":       updatedData.Name,
-			"email":      updatedData.Email,
-			"phone":      updatedData.Phone,
-			"age":        updatedData.Age,
-			"gender":     updatedData.Gender,
-			"updated_at": updatedData.UpdatedAt,
-		},
+		"$set": updatedData,
 	}
-	return r.collection.UpdateByID(ctx, bson.M{"_id": objId}, update)
+	_, err = r.collection.UpdateByID(ctx, objId, update)
+	if err != nil {
+		return nil, err
+	}
+	var patient models.Patient
+	err = r.collection.FindOne(ctx, bson.M{"_id": objId}).Decode(&patient)
+	if err != nil {
+		return nil, err
+	}
+	return &patient, nil
 }
 func (r *PatientRepo) ExistByEmail(ctx context.Context, email string) (bool, error) {
 	filter := bson.M{"email": email}

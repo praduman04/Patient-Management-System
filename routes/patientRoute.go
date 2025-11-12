@@ -13,4 +13,5 @@ func PatientRoutes(e *echo.Echo, handler *handlers.PatientHandler) {
 	patientGroup.GET("/list", handler.GetAll)
 	patientGroup.GET("/:id", handler.GetById)
 	patientGroup.DELETE("/:id", handler.DeletePatient)
+	patientGroup.PUT("/:id", handler.Update)
 }

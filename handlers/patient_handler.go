@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"pms/models"
 	"pms/services"
+	"pms/transformer"
 
 	"pms/utils"
 
@@ -56,11 +57,20 @@ func (h *PatientHandler) DeletePatient(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{"message": "Patient Deleted Successfully"})
 }
 
-// func (h *PatientHandler)update(c echo.Context)error{
-// 	id:=c.Param("id")
-// 	var patient models.Patient
-// 	if err:=c.Bind(patient);err!=nil{
-// 		return c.JSON(http.StatusBadRequest,echo.Map{"error":err.Error()})
-// 	}
+func (h *PatientHandler) Update(c echo.Context) error {
+	id := c.Param("id")
+	var patient transformer.UpdatePatient
 
-// }
+	if err := c.Bind(&patient); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+	if err := utils.Validator.Struct(patient); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": utils.FormatValidationError(err)})
+	}
+	updated, err := h.service.Update(c.Request().Context(), id, patient)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+	return c.JSON(http.StatusOK, echo.Map{"message": "Patient updated Successfully", "patient": updated})
+
+}
